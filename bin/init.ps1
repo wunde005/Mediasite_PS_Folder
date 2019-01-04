@@ -1,5 +1,5 @@
 $APPROOT = $PSScriptRoot -replace 'bin',''
-#$auth_file = ($PSScriptRoot -replace "(.*)\\.+\\?$",'$1') + "\config\auth.xml"
+
 $auth_file = $APPROOT + "\config\auth.xml"
 
 try {
@@ -170,7 +170,7 @@ function putfolder(){
 #path is just for display purposes 
 #quiet suppresses output
 function gfolders{ 
-  param([string]$parentid,[string]$parentname,[string]$path,[switch]$quiet)
+  param([string]$parentid,[string]$parentname,[string]$path,[switch]$quiet,[switch]$readmediasiteusers)
   $local:folderarray = @{name=$parentname;id=$parentid;folders=@()}
   $local:folders = mrestfolderfolder($parentid)
   $local:fpath = $path
@@ -180,20 +180,35 @@ function gfolders{
   }
   #check for subfolders for each folder
   foreach($f in $local:folders){
-    if(-NOT $quiet) {
-        write-host "path: $($local:fpath)/$($f.name)"
+    #by default skip mediasite users folders
+    if(($f.name -ne "Mediasite Users") -or $readmediasiteusers){
+      if(-NOT $quiet) {
+          write-host "path: $($local:fpath)/$($f.name)"
+      }
+      $local:folderarray.folders += gfolders -parentid $f.id -parentname $f.name -path "$($fpath)/$($f.name)" -quiet:$quiet -readmediasiteusers:$readmediasiteusers
     }
-    $local:folderarray.folders += gfolders -parentid $f.id -parentname $f.name -path "$($fpath)/$($f.name)" -quiet:$quiet
   }
   return $local:folderarray
 }
 
-#save json of folder structure
-#if file name is not specified it will return the json
-#if rootfolderid is not specified it will start with the mediasite root folder 
-#quiet suppresses folder output
+
+
 function savefolders{
-    param([string]$filename,[string]$rootfolderid,[switch]$quiet)
+<#
+.SYNOPSIS
+    reads folder list from mediasite server and outputs it as an object or saves it to a file.
+.DESCRIPTION
+    Reads folder list from mediasite server.  
+    If no rootfolderid is specified it will find the root of the server and start from there.
+    If the "-filename" isn't specified it will output a object with folder name, it's id and all sub folders
+    If a file is specifed it will save the folder structure to a json file
+    quiet will supress output
+#>
+
+    param([string]$filename,
+          [string]$rootfolderid,
+          [switch]$quiet,
+          [switch]$readmediasiteusers)
     $usingHome = $false
     #get mediasite root folder id 
     if([string]::IsNullOrEmpty($rootfolderid)){
@@ -225,7 +240,7 @@ function savefolders{
     if(-NOT $quiet){
         write-host "Root folder: $($rootfoldername) $($rootfolderid)"
     }
-    $a = gfolders -parentid $rootfolderid -parentname $rootfoldername -path $rootfoldername -quiet:$quiet
+    $a = gfolders -parentid $rootfolderid -parentname $rootfoldername -path $rootfoldername -quiet:$quiet -readmediasiteusers:$readmediasiteusers
 
     $depth = 100
     #$depth = 1
@@ -234,11 +249,8 @@ function savefolders{
     if([string]::IsNullOrEmpty($filename)){
         return $a
     }
-    else{
-        #return $a
-        
-         ($a | convertto-json -depth $depth) | out-file $filename
-    
+    else{        
+        ($a | convertto-json -depth $depth) | out-file $filename
     }
 }
 
@@ -296,7 +308,15 @@ function cfolder{
 
 #load folder from file
 function loadfoldersfromfile{
-    param([parameter(Mandatory=$true)][string]$filename)
+<#
+.SYNOPSIS
+    Reads folder list from json file and recreates it on the mediasite server.
+.DESCRIPTION
+    Reads folder list from a json file.
+    Uses "ParentFolderId" from json file to specify starting folder on mediasite server.  Empty value means mediasite root folder.
+    The "id" value for the folders in json file is only used if an error is thrown on creation to see if the folder is in the recycle bin.
+#>
+  param([parameter(Mandatory=$true)][string]$filename)
     $folderstructure = (Get-Content $filename | Out-String | ConvertFrom-Json)
     if($folderstructure.parentfolderid -ne ""){
         $res = cfolder -foldername $folderstructure.name -parentfolderid $folderstructure.parentfolderid -id $folderstructure.id
