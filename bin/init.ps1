@@ -1,4 +1,6 @@
-$auth_file = ($PSScriptRoot -replace "(.*)\\.+\\?$",'$1') + "\config\auth.xml"
+$APPROOT = $PSScriptRoot -replace 'bin',''
+#$auth_file = ($PSScriptRoot -replace "(.*)\\.+\\?$",'$1') + "\config\auth.xml"
+$auth_file = $APPROOT + "\config\auth.xml"
 
 try {
   $auth = import-clixml ($auth_file)
@@ -17,7 +19,7 @@ if([string]::IsNullOrEmpty($auth.uri)){
 }
 if([string]::IsNullOrEmpty($auth.sfapikey)){
   write-host "api key missing"
-  write-host "api information: $newuri/api/v1/`$metadata"
+  write-host "Information on the mediasite api can be found here: $newuri/api/v1/`$metadata"
   $newsfapikey = Read-Host 'What is your key?'
   $auth | add-member sfapikey $newsfapikey
   $saveauth = $true
@@ -27,12 +29,16 @@ if(($auth.authorization -eq $null) -and ($auth.secauthtext -eq $null)){
   $username = Read-Host 'What is your username?'
   $pass = Read-Host 'What is your password?' -AsSecureString
   $upass = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($pass))
+  $authorization = "Basic $([System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($username+ ':' + [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($pass)))))"
+  Remove-Variable -name @("upass","pass")
 }
 
 if($auth.autoencrypt -and ($auth.secauthtext -eq $null)){
   write-host "saving auth"
-  $auth.PSObject.Properties.Remove("authorization")
+  
   $secauth = (Convertto-SecureString "$authorization" -asPlainText -Force)
+  $auth.PSObject.Properties.Remove("authorization")
+
   $auth | Add-Member secauthtext $(convertfrom-SecureString -SecureString $secauth)
   $auth | export-clixml ($APPROOT + "config\auth.xml")  
   
