@@ -15,7 +15,7 @@ The two functions it loads are savefolders and loadfoldersfromfile
 
 ---
 
-- NAME: savefolders
+- NAME: **savefolders**
 - SYNOPSIS: reads folder list from mediasite server and outputs it as an object or saves it to a file.
 - SYNTAX: savefolders [[-filename] <String>] [[-rootfolderid] <String>] [-quiet] [-readmediasiteusers] [<CommonParameters>]
 - DESCRIPTION: 
@@ -27,7 +27,7 @@ The two functions it loads are savefolders and loadfoldersfromfile
 
 ---
 
-- NAME: loadfoldersfromfile
+- NAME: **loadfoldersfromfile**
 - SYNOPSIS: Reads folder list from json file and recreates it on the mediasite server.
 - SYNTAX: loadfoldersfromfile [-filename] <String> [<CommonParameters>]
 - DESCRIPTION:
