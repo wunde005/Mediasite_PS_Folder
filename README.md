@@ -46,7 +46,7 @@ The two functions it loads are savefolders and loadfoldersfromfile
 
 
 ---
-# Srt Caption Time adjuster:
+# Srt Caption Time Adjuster:
 
 - NAME: **bin\srt-time-shift.ps1**
 - SYNOPSIS: Reads SRT file and outputs new one with time shifted by cut time
