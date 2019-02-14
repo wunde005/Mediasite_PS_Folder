@@ -1,4 +1,6 @@
-# Mediasite_PS_Folder
+# Mediasite_PS_Tools
+
+# Folder Tools:
 Powershell script to save and load folders on a Mediasite server
 
 To get started open a powershell and load the init script:
@@ -40,3 +42,19 @@ The two functions it loads are savefolders and loadfoldersfromfile
 ---
 # Example
 ![Example](/docs/images/folder_dump_example.JPG)
+
+
+
+---
+# Srt Caption Time adjuster:
+
+- NAME: **bin\srt-time-shift.ps1**
+- SYNOPSIS: Reads SRT file and outputs new one with time shifted by cut time
+- SYNTAX: bin\srt-time-shift.ps1 -file <String> -cuttime <string> -outfile <string> 
+- DESCRIPTION:
+    Reads an SRT file and outputs a new SRT file with the time shifted by the cut time.
+    The cut time can be found in the Mediasite web editor.  When your editing the video put the time line marker to the new begining of the video.  In the time area on the left copy the time (highlighted yellow in the example) and use it as the "cuttime". 
+    
+---
+# Example
+![Example](/docs/images/srt_time_example.jpg)
