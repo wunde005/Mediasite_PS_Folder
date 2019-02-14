@@ -19,7 +19,7 @@ The two functions it loads are savefolders and loadfoldersfromfile
 
 - NAME: **savefolders**
 - SYNOPSIS: reads folder list from mediasite server and outputs it as an object or saves it to a file.
-- SYNTAX: savefolders [[-filename] <String>] [[-rootfolderid] <String>] [-quiet] [-readmediasiteusers] [<CommonParameters>]
+- SYNTAX: ```savefolders [[-filename] <String>] [[-rootfolderid] <String>] [-quiet] [-readmediasiteusers] [<CommonParameters>]```
 - DESCRIPTION: 
     Reads folder list from mediasite server.
     If no rootfolderid is specified it will find the root of the server and start from there.
@@ -31,7 +31,7 @@ The two functions it loads are savefolders and loadfoldersfromfile
 
 - NAME: **loadfoldersfromfile**
 - SYNOPSIS: Reads folder list from json file and recreates it on the mediasite server.
-- SYNTAX: loadfoldersfromfile [-filename] <String> [<CommonParameters>]
+- SYNTAX: ```loadfoldersfromfile [-filename] <String> [<CommonParameters>]```
 - DESCRIPTION:
     Reads folder list from a json file.
     Uses "ParentFolderId" from json file to specify starting folder on mediasite server.  Empty value means mediasite
@@ -50,7 +50,7 @@ The two functions it loads are savefolders and loadfoldersfromfile
 
 - NAME: **bin\srt-time-shift.ps1**
 - SYNOPSIS: Reads SRT file and outputs new one with time shifted by cut time
-- SYNTAX: bin\srt-time-shift.ps1 -file <String> -cuttime <string> -outfile <string> 
+- SYNTAX: ```bin\srt-time-shift.ps1 -file <String> -cuttime <string> -outfile <string> ```
 - DESCRIPTION:
     Reads an SRT file and outputs a new SRT file with the time shifted by the cut time.
     The cut time can be found in the Mediasite web editor.  When your editing the video put the time line marker to the new begining of the video.  In the time area on the left copy the time (highlighted yellow in the example) and use it as the "cuttime". 
