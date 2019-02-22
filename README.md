@@ -53,7 +53,7 @@ The two functions it loads are savefolders and loadfoldersfromfile
 - SYNTAX: ```bin\srt-time-shift.ps1 -file <String> -cuttime <string> -outfile <string> ```
 - DESCRIPTION:
     Reads an SRT file and outputs a new SRT file with the time shifted by the cut time.
-    The cut time can be found in the Mediasite web editor.  When your editing the video put the time line marker to the new begining of the video.  In the time area on the left copy the time (highlighted yellow in the example) and use it as the "cuttime". 
+    The cut time can be found in the Mediasite web editor.  When you're editing the video put the time line marker to the new begining of the video.  In the time area on the right copy the time (highlighted yellow in the example) and use it as the "cuttime". 
     
 ---
 # Example
